@@ -31,4 +31,9 @@ public class UserDto {
     @NotBlank(message = "не может содержать только пробелы")
     @Email
     private String email;
+
+    @Override
+    public String toString() {
+        return String.format("Name: %s%nAge: %d%nEmail: %s%n", name, age, email);
+    }
 }

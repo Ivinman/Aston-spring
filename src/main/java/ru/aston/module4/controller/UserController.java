@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import ru.aston.module4.dto.UserDto;
+import ru.aston.module4.dto.UserModel;
 import ru.aston.module4.service.UserService;
 
 import java.util.List;
@@ -33,8 +34,8 @@ public class UserController {
 
     @PatchMapping("/{userId}")
     public String updateUser(@PathVariable Integer userId,
-                           @RequestBody @Valid UserDto userDto) throws Exception {
-        return userService.updateUser(userId, userDto);
+                           @RequestBody @Valid UserModel userModel) throws Exception {
+        return userService.updateUser(userId, userModel);
     }
 
     @DeleteMapping("/{userId}")
@@ -47,8 +48,8 @@ public class UserController {
         return userService.findAllUsers();
     }
 
-    @GetMapping("/{userId}")
-    public UserDto findUserById(@PathVariable("userId") Integer userId) {
-        return userService.findUserById(userId);
-    }
+//    @GetMapping("/{userId}")
+//    public UserDto findUserById(@PathVariable("userId") Integer userId) {
+//        return userService.findUserById(userId);
+//    }
 }

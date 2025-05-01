@@ -7,14 +7,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Column;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import org.hibernate.annotations.CreationTimestamp;
-
-import ru.aston.module4.dto.UserDto;
 
 import java.time.LocalDateTime;
 
@@ -25,6 +26,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class User {
     @Id
+    @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
@@ -32,6 +34,8 @@ public class User {
     private String name;
 
     @Column(name = "email", nullable = false, unique = true)
+    @Email
+    @NotNull
     private String email;
 
     @Column(name = "age", nullable = false)
@@ -42,10 +46,11 @@ public class User {
     @Setter(AccessLevel.NONE)
     private LocalDateTime createdAt;
 
-    public User(UserDto dto) {
-        this.name = dto.getName();
-        this.age = dto.getAge();
-        this.email = dto.getEmail();
+    public User(long id, String name, int age, String email) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+        this.email = email;
     }
 
     public boolean equals(final Object o) {

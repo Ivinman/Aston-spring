@@ -1,13 +1,16 @@
 package ru.aston.module4.service;
 
+import jakarta.validation.Valid;
 import ru.aston.module4.dto.UserDto;
+import ru.aston.module4.dto.UserModel;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
-    String createUser(UserDto userDto) throws Exception;
-    String updateUser(Integer userId, UserDto userDto) throws Exception;
+    String createUser(@Valid UserDto userDto) throws Exception;
+    String updateUser(Integer userId, @Valid UserModel userModel) throws Exception;
     String deleteUSer(Integer userId);
     List<UserDto> findAllUsers();
-    UserDto findUserById(Integer userId);
+    Optional<UserDto> findUserById(Integer userId);
 }
