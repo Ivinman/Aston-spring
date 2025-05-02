@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.aston.module4.dto.UserDto;
 import ru.aston.module4.dto.UserModel;
 import ru.aston.module4.mapper.UserMapper;
-import ru.aston.module4.model.User;
+import ru.aston.module4.entity.User;
 import ru.aston.module4.service.UserService;
 import ru.aston.module4.springRep.UserRepository;
 
@@ -49,8 +49,8 @@ public class UserServiceTest {
         UserDto userDto = new UserDto("boris", 23, "test@test.ru");
         service.createUser(userDto);
         UserModel userModel = new UserModel(2L, "test", 23, "test@test.ru");
-        service.updateUser(1, userModel);
-        System.out.println(service.findUserById(1));
+        service.updateUser(1L, userModel);
+        System.out.println(service.findUserById(1L));
     }
 
     @Order(3)

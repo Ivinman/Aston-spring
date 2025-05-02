@@ -1,4 +1,4 @@
-package ru.aston.module4.Exception;
+package ru.aston.module4.exception;
 
 public class NotFoundException extends RuntimeException {
     public NotFoundException(String message) {

@@ -5,7 +5,7 @@ import ru.aston.module4.dto.UserDto;
 import ru.aston.module4.dto.UserModel;
 import ru.aston.module4.mapper.UserMapper;
 import ru.aston.module4.mapper.UserMapperImpl;
-import ru.aston.module4.model.User;
+import ru.aston.module4.entity.User;
 
 import static org.junit.jupiter.api.Assertions.*;
 

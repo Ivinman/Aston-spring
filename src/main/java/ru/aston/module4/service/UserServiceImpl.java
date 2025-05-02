@@ -2,7 +2,6 @@ package ru.aston.module4.service;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,12 +9,12 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import org.springframework.validation.annotation.Validated;
-import ru.aston.module4.Exception.AlreadyExistException;
-import ru.aston.module4.Exception.NotFoundException;
+import ru.aston.module4.exception.AlreadyExistException;
+import ru.aston.module4.exception.NotFoundException;
 import ru.aston.module4.dto.UserDto;
 import ru.aston.module4.dto.UserModel;
 import ru.aston.module4.mapper.UserMapper;
-import ru.aston.module4.model.User;
+import ru.aston.module4.entity.User;
 import ru.aston.module4.springRep.UserRepository;
 
 
@@ -27,60 +26,64 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Validated
 public class UserServiceImpl implements UserService {
-    @Autowired
-    private final UserMapper mapper;
-    private final UserRepository userRepository;
+	@Autowired
+	private final UserMapper mapper;
+	private final UserRepository userRepository;
 
-    @Override
-    public String createUser(@Valid UserDto userDto) throws Exception {
-        try {
-            User user = userRepository.save(mapper.toUser(userDto));
-            return "Пользователь " + user.getName() + " добавлен в базу данных с id = " + user.getId();
-        } catch (Exception e) {
-            throw new AlreadyExistException("Пользователь с такой почтой уже существует");
-        }
-    }
+	@Override
+	public UserDto createUser(UserDto userDto) {
+		try {
+			User user = mapper.toUser(userDto);
+			User saved = userRepository.save(user);
+			return mapper.toDto(saved);
+		} catch (DataIntegrityViolationException e) {
+			log.error("Ошибка во время создания пользователя {} {}", userDto, e.getMessage());
+			throw new AlreadyExistException("Пользователь с такой почтой уже существует");
+		}
+	}
 
-    @Override
-    public String updateUser(Integer userId, @Valid UserModel userModel) throws Exception {
-        Optional<User> userFromDb = userRepository.findById(userId);
-        if (userFromDb.isEmpty()) {
-            throw new NotFoundException("Пользователь с id = " + userId + " не существует");
-        }
+	@Override
+	public UserDto updateUser(Long userId, @Valid UserModel userModel) {
+		User user = getUserOrThrow(userId);
 
-        try {
-            User user = userFromDb.get();
-            mapper.updateUserFromDto(userModel, user);
-            userRepository.save(user);
-            return "Данные пользователя с id = " + userId + " обновлены";
+		try {
+			mapper.updateUserFromDto(userModel, user);
+			User updated = userRepository.save(user);
+			return mapper.toDto(updated);
+		} catch (DataIntegrityViolationException e) {
+			log.error("Ошибка во время обновления пользователя {} {}", user, e.getMessage());
+			throw new AlreadyExistException("Пользователь с такой почтой уже существует");
+		}
+	}
 
-        } catch (DataIntegrityViolationException e) {
-            throw new AlreadyExistException("Пользователь с такой почтой уже существует");
-        }
-    }
+	@Override
+	public void deleteUser(Long userId) {
+		if (!userRepository.existsById(userId)) {
+			log.error("Пользователь c id = {} не найден", userId);
+			throw new NotFoundException("Пользователь с id = " + userId + " не существует");
+		}
+		userRepository.deleteById(userId);
+	}
 
+	@Override
+	public List<UserDto> findAllUsers() {
+		return userRepository.findAll().stream()
+				.map(mapper::toDto)
+				.toList();
+	}
 
-    @Override
-    public String deleteUSer(Integer userId) {
-        try {
-            userRepository.deleteById(userId);
-            return "Пользователь с id = " + userId + " удален";
-        } catch (Exception e) {
-            throw new NotFoundException("Пользователь с id = " + userId + " не существует");
-        }
-    }
+	@Override
+	public Optional<UserDto> findUserById(Long userId) {
+		return userRepository.findById(userId)
+				.map(mapper::toDto);
+	}
 
-    @SneakyThrows
-    @Override
-    public List<UserDto> findAllUsers() {
-        return userRepository.findAll().stream()
-                .map(mapper::toDto)
-                .toList();
-    }
-
-    @Override
-    public Optional<UserDto> findUserById(Integer userId) {
-        Optional<User> userFromDb = userRepository.findById(userId);
-	    return userFromDb.map(mapper::toDto);
-    }
+	private User getUserOrThrow(Long userId) {
+		return userRepository.findById(userId)
+				.orElseThrow(() -> {
+					log.error("Пользователь c id = {} не найден", userId);
+					return new NotFoundException("Пользователь с id = " + userId + " не существует");
+				});
+	}
 }
+

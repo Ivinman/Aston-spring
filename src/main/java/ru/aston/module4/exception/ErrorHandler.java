@@ -1,4 +1,4 @@
-package ru.aston.module4.Exception;
+package ru.aston.module4.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;

@@ -1,4 +1,4 @@
-package ru.aston.module4.model;
+package ru.aston.module4.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -10,7 +10,6 @@ import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

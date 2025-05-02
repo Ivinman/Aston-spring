@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-    String createUser(@Valid UserDto userDto) throws Exception;
-    String updateUser(Integer userId, @Valid UserModel userModel) throws Exception;
-    String deleteUSer(Integer userId);
+    UserDto createUser(@Valid UserDto userDto);
+    UserDto updateUser(Long userId, @Valid UserModel userModel);
+    void deleteUser(Long userId);
     List<UserDto> findAllUsers();
-    Optional<UserDto> findUserById(Integer userId);
+    Optional<UserDto> findUserById(Long userId);
 }
