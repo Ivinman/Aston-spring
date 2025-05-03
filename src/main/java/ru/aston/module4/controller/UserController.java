@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import ru.aston.module4.dto.UserDto;
 import ru.aston.module4.dto.UserModel;
-import ru.aston.module4.exception.NotFoundException;
 import ru.aston.module4.service.UserService;
 
 import java.util.List;
@@ -56,9 +55,7 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> findUserById(@PathVariable Long userId) {
-        return userService.findUserById(userId)
-                .map(ResponseEntity::ok)
-                .orElseThrow(() -> new NotFoundException("Пользователь с id = " + userId + " не найден"));
+        return ResponseEntity.ok(userService.findUserById(userId).get());
     }
 }
 

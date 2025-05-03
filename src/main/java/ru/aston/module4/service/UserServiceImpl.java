@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import ru.aston.module4.exception.AlreadyExistException;
 import ru.aston.module4.exception.NotFoundException;
@@ -32,17 +33,13 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDto createUser(UserDto userDto) {
-		try {
 			User user = mapper.toUser(userDto);
 			User saved = userRepository.save(user);
 			return mapper.toDto(saved);
-		} catch (DataIntegrityViolationException e) {
-			log.error("Ошибка во время создания пользователя {} {}", userDto, e.getMessage());
-			throw new AlreadyExistException("Пользователь с такой почтой уже существует");
-		}
 	}
 
 	@Override
+	@Transactional
 	public UserDto updateUser(Long userId, @Valid UserModel userModel) {
 		User user = getUserOrThrow(userId);
 
@@ -57,6 +54,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional
 	public void deleteUser(Long userId) {
 		if (!userRepository.existsById(userId)) {
 			log.error("Пользователь c id = {} не найден", userId);
@@ -66,13 +64,13 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<UserDto> findAllUsers() {
-		return userRepository.findAll().stream()
-				.map(mapper::toDto)
-				.toList();
+		return mapper.toDtoList(userRepository.findAll());
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<UserDto> findUserById(Long userId) {
 		return userRepository.findById(userId)
 				.map(mapper::toDto);
