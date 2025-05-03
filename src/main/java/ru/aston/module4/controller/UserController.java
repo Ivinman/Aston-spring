@@ -5,6 +5,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,33 +25,37 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/users")
+@RequestMapping("/users")
 public class UserController {
+
     private final UserService userService;
 
     @PostMapping
-    public String addUser(@RequestBody @Valid UserDto userDto) throws Exception {
-        return userService.createUser(userDto);
+    public ResponseEntity<UserDto> addUser(@RequestBody @Valid UserDto userDto) {
+        UserDto createdUser = userService.createUser(userDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
     @PatchMapping("/{userId}")
-    public String updateUser(@PathVariable Integer userId,
-                           @RequestBody @Valid UserModel userModel) throws Exception {
-        return userService.updateUser(userId, userModel);
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long userId,
+                                              @RequestBody @Valid UserModel userModel) {
+        return ResponseEntity.ok(userService.updateUser(userId, userModel));
     }
 
     @DeleteMapping("/{userId}")
-    public String deleteUser(@PathVariable Integer userId) {
-        return userService.deleteUSer(userId);
+    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
+        userService.deleteUser(userId);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
-    public List<UserDto> findAllUsers() {
-        return userService.findAllUsers();
+    public ResponseEntity<List<UserDto>> findAllUsers() {
+        return ResponseEntity.ok(userService.findAllUsers());
     }
 
-//    @GetMapping("/{userId}")
-//    public UserDto findUserById(@PathVariable("userId") Integer userId) {
-//        return userService.findUserById(userId);
-//    }
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDto> findUserById(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.findUserById(userId).get());
+    }
 }
+
