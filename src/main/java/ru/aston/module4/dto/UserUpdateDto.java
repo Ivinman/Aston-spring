@@ -15,7 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class UserModel {
+public class UserUpdateDto {
 	private long id;
 	@NotNull(message = "не может быть пустым")
 	@NotBlank(message = "не может содержать только пробелы")

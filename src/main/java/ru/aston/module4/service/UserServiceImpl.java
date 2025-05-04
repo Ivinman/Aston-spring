@@ -2,19 +2,15 @@ package ru.aston.module4.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import ru.aston.module4.exception.AlreadyExistException;
-import ru.aston.module4.exception.NotFoundException;
 import ru.aston.module4.dto.UserDto;
-import ru.aston.module4.dto.UserModel;
-import ru.aston.module4.mapper.UserMapper;
+import ru.aston.module4.dto.UserUpdateDto;
 import ru.aston.module4.entity.User;
-import ru.aston.module4.springRep.UserRepository;
+import ru.aston.module4.exception.NotFoundException;
+import ru.aston.module4.mapper.UserMapper;
+import ru.aston.module4.repository.UserRepository;
 
 import java.util.List;
 
@@ -22,64 +18,52 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-	@Autowired
-	private final UserMapper mapper;
-	private final UserRepository userRepository;
+    @Autowired
+    private final UserMapper mapper;
+    private final UserRepository userRepository;
 
-	@Override
-	public UserDto createUser(UserDto userDto) {
-		User user = mapper.toUser(userDto);
-		try {
-			User saved = userRepository.save(user);
-			return mapper.toDto(saved);
-		} catch (DataIntegrityViolationException e) {
-			log.error("Ошибка во время обновления пользователя {} {}", user, e.getMessage());
-			throw new AlreadyExistException("Пользователь с такой почтой уже существует");
-		}
+    @Override
+    @Transactional
+    public UserDto createUser(UserDto userDto) {
+        User user = mapper.toUser(userDto);
+        User savedUser = userRepository.save(user);
+        log.info("New user with id {} successfully created", savedUser.getId());
+        return mapper.toDto(savedUser);
+    }
 
-	}
+    @Override
+    @Transactional
+    public UserDto updateUser(Long userId, UserUpdateDto userUpdateDto) {
+        User user = getUserOrThrow(userId);
+        mapper.updateUserFromDto(userUpdateDto, user);
+        User userToUpdate = userRepository.save(user);
+        log.info("User with id {} successfully updated", userToUpdate.getId());
+        return mapper.toDto(userToUpdate);
+    }
 
-	@Override
-	public UserDto updateUser(Long userId, UserModel userModel) {
-		User user = getUserOrThrow(userId);
-		try {
-			mapper.updateUserFromDto(userModel, user);
-			User updated = userRepository.save(user);
-			return mapper.toDto(updated);
-		} catch (DataIntegrityViolationException e) {
-			log.error("Ошибка во время обновления пользователя {} {}", user, e.getMessage());
-			throw new AlreadyExistException("Пользователь с такой почтой уже существует");
-		}
-	}
+    @Override
+    @Transactional
+    public void deleteUser(Long userId) {
+        getUserOrThrow(userId);
+        userRepository.deleteById(userId);
+        log.info("User with id {} successfully deleted", userId);
+    }
 
-	@Override
-	@Transactional
-	public void deleteUser(Long userId) {
-		if (!userRepository.existsById(userId)) {
-			log.error("Пользователь c id = {} не найден", userId);
-			throw new NotFoundException("Пользователь с id = " + userId + " не существует");
-		}
-		userRepository.deleteById(userId);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserDto> findAllUsers() {
+        return mapper.toDtoList(userRepository.findAll());
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<UserDto> findAllUsers() {
-		return mapper.toDtoList(userRepository.findAll());
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public UserDto findUserById(Long userId) {
+        return mapper.toDto(getUserOrThrow(userId));
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public UserDto findUserById(Long userId) {
-		return mapper.toDto(getUserOrThrow(userId));
-	}
-
-	private User getUserOrThrow(Long userId) {
-		return userRepository.findById(userId)
-				.orElseThrow(() -> {
-					log.error("Пользователь c id = {} не найден", userId);
-					return new NotFoundException("Пользователь с id = " + userId + " не существует");
-				});
-	}
+    private User getUserOrThrow(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
+    }
 }
 

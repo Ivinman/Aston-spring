@@ -16,7 +16,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import ru.aston.module4.dto.UserDto;
-import ru.aston.module4.dto.UserModel;
+import ru.aston.module4.dto.UserUpdateDto;
 import ru.aston.module4.exception.AlreadyExistException;
 import ru.aston.module4.exception.NotFoundException;
 import ru.aston.module4.service.UserService;
@@ -52,9 +52,19 @@ class UserControllerTest {
     private final UserService service = mock();
 
     private MockMvc mvc;
-    private final UserDto userDto = new UserDto("test", 23, "test@email.ru");
-    private final UserDto badUserDto = new UserDto("t", -4, "t st@");
-    private final UserModel userModel = new UserModel(2L, "testSecond", 23, "testSecond@email.ru");
+    private final UserDto userDto = UserDto.builder()
+            .name("test")
+            .age(23)
+            .email("test@email.ru")
+            .build();
+
+    private final UserDto badUserDto = UserDto.builder()
+            .name("t")
+            .age(-4)
+            .email("t st@")
+            .build();
+
+    private final UserUpdateDto userUpdateDto = new UserUpdateDto(2L, "testSecond", 23, "testSecond@email.ru");
 
     @BeforeEach
     void setUp(WebApplicationContext wac) {
@@ -98,23 +108,20 @@ class UserControllerTest {
     @SneakyThrows
     @Test
     public void updateUser() {
-        when(service.updateUser(any(), any())).thenReturn(new UserDto(
-                userModel.getName(),
-                userModel.getAge(),
-                userModel.getEmail()))
+        when(service.updateUser(any(), any())).thenReturn(new UserDto())
                 .thenThrow(NotFoundException.class)
                 .thenThrow(AlreadyExistException.class);
 
         mvc.perform(patch("/users/{userId}" , 1L)
-                .content(objectMapper.writeValueAsString(userModel))
+                .content(objectMapper.writeValueAsString(userUpdateDto))
                 .characterEncoding(StandardCharsets.UTF_8)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
 
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is(userModel.getName())))
-                .andExpect(jsonPath("$.age", is(userModel.getAge())))
-                .andExpect(jsonPath("$.email", is(userModel.getEmail())));
+                .andExpect(jsonPath("$.name", is(userUpdateDto.getName())))
+                .andExpect(jsonPath("$.age", is(userUpdateDto.getAge())))
+                .andExpect(jsonPath("$.email", is(userUpdateDto.getEmail())));
 
         mvc.perform(patch("/users/{userId}" , 1)
                         .content(objectMapper.writeValueAsString(badUserDto))
@@ -125,7 +132,7 @@ class UserControllerTest {
                 .andExpect(status().isBadRequest());
 
         mvc.perform(patch("/users/{userId}" , 23)
-                .content(objectMapper.writeValueAsString(userModel))
+                .content(objectMapper.writeValueAsString(userUpdateDto))
                 .characterEncoding(StandardCharsets.UTF_8)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -133,7 +140,7 @@ class UserControllerTest {
                         .andExpect(status().isNotFound());
 
         mvc.perform(patch("/users/{userId}" , 1)
-                .content(objectMapper.writeValueAsString(userModel))
+                .content(objectMapper.writeValueAsString(userUpdateDto))
                 .characterEncoding(StandardCharsets.UTF_8)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
