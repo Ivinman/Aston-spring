@@ -45,7 +45,7 @@ public class UserServiceTest {
     public void updateUser() {
         service.createUser(userDto1);
         UserModel userModel = new UserModel(2L, "boris", 23, "testUpdate@test.ru");
-        service.updateUser(repository.findAll().getFirst().getId(), userModel);
+        service.updateUser(repository.findAll().get(0).getId(), userModel);
         Assertions.assertNotNull(repository.findByEmail(userModel.getEmail()));
 
         service.createUser(userDto2);
@@ -60,7 +60,7 @@ public class UserServiceTest {
         service.createUser(userDto1);
         service.createUser(userDto2);
         assertEquals(2, repository.findAll().size());
-        service.deleteUser(repository.findAll().getFirst().getId());
+        service.deleteUser(repository.findAll().get(0).getId());
         assertEquals(1, repository.findAll().size());
         assertThrows(NotFoundException.class, () -> service.deleteUser(23L));
     }
@@ -80,7 +80,7 @@ public class UserServiceTest {
         service.createUser(userDto2);
         assertEquals(2, repository.findAll().size());
 
-        assertEquals(service.findUserById(repository.findAll().getFirst().getId()).getEmail(), userDto1.getEmail());
+        assertEquals(service.findUserById(repository.findAll().get(0).getId()).getEmail(), userDto1.getEmail());
     }
 
 }
