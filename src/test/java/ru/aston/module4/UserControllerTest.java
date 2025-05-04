@@ -5,19 +5,18 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import ru.aston.module4.dto.UserDto;
 import ru.aston.module4.dto.UserModel;
-import ru.aston.module4.entity.User;
 import ru.aston.module4.exception.AlreadyExistException;
 import ru.aston.module4.exception.NotFoundException;
 import ru.aston.module4.service.UserService;
@@ -44,8 +43,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@Transactional
-@SpringBootTest
+@WebMvcTest
+@ContextConfiguration(classes = Module4Application.class)
 class UserControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -53,7 +52,6 @@ class UserControllerTest {
     private final UserService service = mock();
 
     private MockMvc mvc;
-    private final User user = new User();
     private final UserDto userDto = new UserDto("test", 23, "test@email.ru");
     private final UserDto badUserDto = new UserDto("t", -4, "t st@");
     private final UserModel userModel = new UserModel(2L, "testSecond", 23, "testSecond@email.ru");
