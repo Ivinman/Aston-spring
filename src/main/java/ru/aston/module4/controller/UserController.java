@@ -2,6 +2,7 @@ package ru.aston.module4.controller;
 
 import jakarta.validation.Valid;
 
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import ru.aston.module4.dto.UserDto;
-import ru.aston.module4.dto.UserModel;
+import ru.aston.module4.dto.UserUpdateDto;
 import ru.aston.module4.service.UserService;
 
 import java.util.List;
@@ -37,13 +38,13 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long userId,
-                                              @RequestBody @Valid UserModel userModel) {
-        return ResponseEntity.ok(userService.updateUser(userId, userModel));
+    public ResponseEntity<UserDto> updateUser(@Positive @PathVariable Long userId,
+                                              @RequestBody @Valid UserUpdateDto userUpdateDto) {
+        return ResponseEntity.ok(userService.updateUser(userId, userUpdateDto));
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
+    public ResponseEntity<Void> deleteUser(@Positive @PathVariable Long userId) {
         userService.deleteUser(userId);
         return ResponseEntity.noContent().build();
     }
@@ -54,7 +55,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserDto> findUserById(@PathVariable Long userId) {
+    public ResponseEntity<UserDto> findUserById(@Positive @PathVariable Long userId) {
         return ResponseEntity.ok(userService.findUserById(userId));
     }
 }

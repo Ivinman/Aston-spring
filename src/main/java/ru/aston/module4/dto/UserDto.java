@@ -8,15 +8,21 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Email;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
+@Builder
 public class UserDto {
+    private Long id;
+
     @NotNull(message = "не может быть пустым")
     @NotBlank(message = "не может содержать только пробелы")
     @Size(min = 2, max = 255, message = "должно иметь 2–255 символов")
@@ -31,6 +37,8 @@ public class UserDto {
     @NotBlank(message = "не может содержать только пробелы")
     @Email
     private String email;
+
+    private LocalDateTime createdAt;
 
     @Override
     public String toString() {
