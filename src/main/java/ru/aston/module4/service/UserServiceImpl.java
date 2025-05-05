@@ -2,7 +2,6 @@ package ru.aston.module4.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.aston.module4.dto.UserDto;
@@ -18,7 +17,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    @Autowired
     private final UserMapper mapper;
     private final UserRepository userRepository;
 
@@ -52,7 +50,12 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public List<UserDto> findAllUsers() {
-        return mapper.toDtoList(userRepository.findAll());
+        List<User> users = userRepository.findAll();
+        if (!users.isEmpty()) {
+            return mapper.toDtoList(users);
+        } else {
+            throw new NotFoundException("No users found in database");
+        }
     }
 
     @Override

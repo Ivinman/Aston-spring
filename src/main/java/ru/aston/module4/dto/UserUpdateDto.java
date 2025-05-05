@@ -17,6 +17,7 @@ import lombok.Setter;
 @Getter
 public class UserUpdateDto {
 	private long id;
+
 	@NotNull(message = "не может быть пустым")
 	@NotBlank(message = "не может содержать только пробелы")
 	@Size(min = 2, max = 255, message = "должно иметь 2–255 символов")
