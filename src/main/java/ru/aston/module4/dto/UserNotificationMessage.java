@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class UserNotificationMessage {
+	private final Event event;
 	private final String email;
 	private String message;
 
@@ -20,17 +21,24 @@ public class UserNotificationMessage {
 
 		public UserNotificationMessage userCreateNotification() {
 			return new UserNotificationMessage(
-					email
-					,"Здравствуйте!\nВаш аккаунт " + userName + " на сайте User Service был успешно создан."
+					Event.CREATE,
+					email,
+					"Здравствуйте!\nВаш аккаунт " + userName + " на сайте User Service был успешно создан."
 			);
 		}
 
 		public UserNotificationMessage userDeleteNotification() {
 			return new UserNotificationMessage(
-					email
-					,"Здравствуйте!\nВаш аккаунт " + userName + " на сайте User Service был успешно удалён."
+					Event.DELETE,
+					email,
+					"Здравствуйте!\nВаш аккаунт " + userName + " на сайте User Service был успешно удалён."
 			);
 		}
+	}
+
+	private enum Event {
+		CREATE,
+		DELETE
 	}
 }
 

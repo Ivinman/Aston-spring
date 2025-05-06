@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
                 .builder(savedUser.getEmail(), savedUser.getName())
                         .userCreateNotification();
 
-        kafkaProducer.sendMessage("userCreateTopic", message);
+        kafkaProducer.sendMessage("userEventTopic", message);
 
         log.info("New user with id {} successfully created", savedUser.getId());
         return mapper.toDto(savedUser);
@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
                 .builder(user.getEmail(), user.getName())
                 .userDeleteNotification();
 
-        kafkaProducer.sendMessage("userDeleteTopic", message);
+        kafkaProducer.sendMessage("userEventTopic", message);
 
         log.info("User with id {} successfully deleted", userId);
     }

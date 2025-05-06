@@ -33,12 +33,7 @@ public class ConfigKafka {
 	}
 
 	@Bean
-	public NewTopic userCreationTopic() {
-		return TopicBuilder.name("userCreateTopic").build();
-	}
-
-	@Bean
-	public NewTopic userDeletionTopic() {
-		return TopicBuilder.name("userDeleteTopic").build();
+	public NewTopic userEventTopic() {
+		return TopicBuilder.name("userEventTopic").build();
 	}
 }
