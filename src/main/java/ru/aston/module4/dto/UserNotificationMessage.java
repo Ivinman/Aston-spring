@@ -3,8 +3,8 @@ package ru.aston.module4.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor
 @Getter
+@AllArgsConstructor
 public class UserNotificationMessage {
 	private final String email;
 	private String message;
@@ -33,3 +33,4 @@ public class UserNotificationMessage {
 		}
 	}
 }
+
