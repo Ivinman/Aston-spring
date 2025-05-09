@@ -10,7 +10,7 @@ import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
-import ru.aston.module4.dto.UserNotificationMessage;
+import ru.aston.module4.dto.UserEventDto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +19,7 @@ import java.util.Map;
 public class ConfigKafka {
 
 	@Bean
-	public ProducerFactory<String, UserNotificationMessage> producerFactory() {
+	public ProducerFactory<String, UserEventDto> producerFactory() {
 		Map<String, Object> config = new HashMap<>();
 		config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
 		config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -28,7 +28,7 @@ public class ConfigKafka {
 	}
 
 	@Bean
-	public KafkaTemplate<String, UserNotificationMessage> kafkaTemplate() {
+	public KafkaTemplate<String, UserEventDto> kafkaTemplate() {
 		return new KafkaTemplate<>(producerFactory());
 	}
 

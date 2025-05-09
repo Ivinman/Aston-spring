@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.aston.module4.dto.UserDto;
-import ru.aston.module4.dto.UserNotificationMessage;
+import ru.aston.module4.dto.UserEventDto;
 import ru.aston.module4.dto.UserUpdateDto;
 import ru.aston.module4.entity.User;
 import ru.aston.module4.exception.NotFoundException;
@@ -28,11 +28,9 @@ public class UserServiceImpl implements UserService {
         User user = mapper.toUser(userDto);
         User savedUser = userRepository.save(user);
 
-        UserNotificationMessage message = UserNotificationMessage
-                .builder(savedUser.getEmail(), savedUser.getName())
-                        .userCreateNotification();
+        UserEventDto userCreateDto = new UserEventDto(user.getName(), userDto.getEmail(), UserEventDto.Event.CREATE);
 
-        kafkaProducer.sendMessage("userEventTopic", message);
+        kafkaProducer.sendMessage("userEventTopic", userCreateDto);
 
         log.info("New user with id {} successfully created", savedUser.getId());
         return mapper.toDto(savedUser);
@@ -54,11 +52,9 @@ public class UserServiceImpl implements UserService {
         User user = getUserOrThrow(userId);
         userRepository.deleteById(userId);
 
-        UserNotificationMessage message = UserNotificationMessage
-                .builder(user.getEmail(), user.getName())
-                .userDeleteNotification();
+        UserEventDto userDeleteDto = new UserEventDto(user.getName(), user.getEmail(), UserEventDto.Event.DELETE);
 
-        kafkaProducer.sendMessage("userEventTopic", message);
+        kafkaProducer.sendMessage("userEventTopic", userDeleteDto);
 
         log.info("User with id {} successfully deleted", userId);
     }
