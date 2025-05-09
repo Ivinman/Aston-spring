@@ -1,11 +1,9 @@
 package ru.aston.module4.service;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.aston.module4.dto.UserEventDto;
 
-@Slf4j
 @Service
 public class KafkaProducerService {
 	private final KafkaTemplate<String, UserEventDto> kafkaTemplate;
