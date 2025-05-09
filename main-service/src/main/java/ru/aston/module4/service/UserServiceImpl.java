@@ -14,11 +14,6 @@ import ru.aston.module4.repository.UserRepository;
 
 import java.util.List;
 
-/**
- * Базовая реализация {@link UserService} через @see ru.aston.module4.repository.UserRepository
- * c внутренним методом @see #getUserOrThrow(Long)
- */
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -26,14 +21,6 @@ public class UserServiceImpl implements UserService {
     private final UserMapper mapper;
     private final UserRepository userRepository;
     private final KafkaProducerService kafkaProducer;
-
-    /**
-     * Создает запись в базе данных на основе полученного userDto
-     * и отправляет {@link ru.aston.module4.dto.UserNotificationMessage} в userEventTopic kafka
-     * <p>Так же создает log</p>
-     * @param userDto основа для создания записи
-     * @return ту же запись userDto с присвоенным id
-     */
 
     @Override
     @Transactional
@@ -49,14 +36,6 @@ public class UserServiceImpl implements UserService {
         return mapper.toDto(savedUser);
     }
 
-    /**
-     * Обновляет запись на основе полученного id и userUpdateDto
-     * <p>Так же создает log</p>
-     * @param userId ключ для поиска записи в базе данных
-     * @param userUpdateDto описывает поля, которые будут обновлены
-     * @return обновленную запись userDto
-     */
-
     @Override
     @Transactional
     public UserDto updateUser(Long userId, UserUpdateDto userUpdateDto) {
@@ -66,13 +45,6 @@ public class UserServiceImpl implements UserService {
         log.info("User with id {} successfully updated", userToUpdate.getId());
         return mapper.toDto(userToUpdate);
     }
-
-    /**
-     * Удаляет из базы данных запись с полученным ключем
-     * и отправляет {@link ru.aston.module4.dto.UserNotificationMessage} в userEventTopic kafka
-     * <p>Так же создает log</p>
-     * @param userId ключ для удаления
-     */
 
     @Override
     @Transactional
@@ -87,13 +59,6 @@ public class UserServiceImpl implements UserService {
         log.info("User with id {} successfully deleted", userId);
     }
 
-    /**
-     * Ищет всех пользователей в базе данных
-     * или выбрасывает исключение
-     * @return список @see ru.aston.module4.dto.UserDto
-     * @throws NotFoundException если список пуст
-     */
-
     @Override
     @Transactional(readOnly = true)
     public List<UserDto> findAllUsers() {
@@ -105,25 +70,11 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    /**
-     * Ищет пользователя с указанным ключем через метод
-     * @see #getUserOrThrow(Long)
-     * @param userId ключ поиска
-     * @return запись userDto
-     */
-
     @Override
     @Transactional(readOnly = true)
     public UserDto findUserById(Long userId) {
         return mapper.toDto(getUserOrThrow(userId));
     }
-
-    /**
-     * Ищет пользователя с указанным ключем а базе данных
-     * @param userId ключ поиска
-     * @return запись user
-     * @throws NotFoundException если записи с указанным ключем не существует
-     */
 
     private User getUserOrThrow(Long userId) {
         return userRepository.findById(userId)
