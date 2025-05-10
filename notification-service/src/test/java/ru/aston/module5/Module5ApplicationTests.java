@@ -1,10 +1,10 @@
-package module5;
+package ru.aston.module5;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
-@Import(module5.TestcontainersConfiguration.class)
+@Import(TestcontainersConfiguration.class)
 @SpringBootTest
 class Module5ApplicationTests {
 

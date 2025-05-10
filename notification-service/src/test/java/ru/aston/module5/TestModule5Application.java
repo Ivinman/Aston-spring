@@ -1,7 +1,6 @@
-package module5;
+package ru.aston.module5;
 
 import org.springframework.boot.SpringApplication;
-import ru.aston.module5.Module5Application;
 
 public class TestModule5Application {
 
