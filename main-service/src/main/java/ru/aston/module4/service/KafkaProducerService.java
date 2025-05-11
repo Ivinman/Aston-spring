@@ -13,7 +13,6 @@ public class KafkaProducerService {
 
 	public KafkaProducerService(KafkaTemplate<String, UserEventDto> kafkaTemplate) {
 		this.kafkaTemplate = kafkaTemplate;
-//		this.kafkaUserTopicName = kafkaUserTopicName;
 	}
 
 	public void sendUserEvent(UserEventDto dto) {

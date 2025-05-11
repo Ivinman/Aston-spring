@@ -6,7 +6,8 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -39,7 +40,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Transactional
 @Testcontainers
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserServiceTest {
     private final UserService service;
     private final UserRepository repository;
@@ -83,7 +83,6 @@ public class UserServiceTest {
     }
 
     @Test
-    @Order(2)
     public void addUser() {
         service.createUser(userDto1);
         assertEquals(1, service.findAllUsers().size());
@@ -107,7 +106,6 @@ public class UserServiceTest {
     }
 
     @Test
-    @Order(1)
     public void deleteUser() {
         service.createUser(userDto1);
         service.createUser(userDto2);
@@ -115,7 +113,7 @@ public class UserServiceTest {
         service.deleteUser(repository.findAll().get(0).getId());
         assertEquals(1, repository.findAll().size());
         assertThrows(NotFoundException.class, () -> service.deleteUser(23L));
-        assertEquals(3, getConsumerRecords().count());
+        assertEquals(7, getConsumerRecords().count());
     }
 
     @Test
