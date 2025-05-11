@@ -8,12 +8,12 @@ import ru.aston.module4.dto.UserEventDto;
 @Service
 public class KafkaProducerService {
 	private final KafkaTemplate<String, UserEventDto> kafkaTemplate;
-	@Value("${user.event.topic.name}")
-	private final String kafkaUserTopicName;
+	@Value(value = "${user.event.topic.name}")
+	private String kafkaUserTopicName;
 
-	public KafkaProducerService(KafkaTemplate<String, UserEventDto> kafkaTemplate, String kafkaUserTopicName) {
+	public KafkaProducerService(KafkaTemplate<String, UserEventDto> kafkaTemplate) {
 		this.kafkaTemplate = kafkaTemplate;
-		this.kafkaUserTopicName = kafkaUserTopicName;
+//		this.kafkaUserTopicName = kafkaUserTopicName;
 	}
 
 	public void sendUserEvent(UserEventDto dto) {

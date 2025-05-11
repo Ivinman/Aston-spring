@@ -19,7 +19,6 @@ import java.util.List;
  * c внутренним методом @see #getUserOrThrow(Long)
  */
 
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
