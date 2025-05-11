@@ -46,13 +46,11 @@ public class KafkaConfig {
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, UserEventDto> kafkaListenerContainerFactory(
             ConsumerFactory<String, UserEventDto> consumerFactory) {
+
+        DefaultErrorHandler errorHandler = new DefaultErrorHandler(new FixedBackOff(1000L, 5));
+
         ConcurrentKafkaListenerContainerFactory<String, UserEventDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
-
         factory.setConsumerFactory(consumerFactory);
-        FixedBackOff fixedBackOff = new FixedBackOff(1000L, 5);
-
-        DefaultErrorHandler errorHandler = new DefaultErrorHandler(fixedBackOff);
-
         factory.setCommonErrorHandler(errorHandler);
         return factory;
     }

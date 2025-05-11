@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
 
         UserEventDto userCreateDto = new UserEventDto(user.getName(), userDto.getEmail(), UserEventDto.Event.CREATE);
 
-        kafkaProducer.sendMessage("userEventTopic", userCreateDto);
+        kafkaProducer.sendUserEvent(userCreateDto);
 
         log.info("New user with id {} successfully created", savedUser.getId());
         return mapper.toDto(savedUser);
@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
 
         UserEventDto userDeleteDto = new UserEventDto(user.getName(), user.getEmail(), UserEventDto.Event.DELETE);
 
-        kafkaProducer.sendMessage("userEventTopic", userDeleteDto);
+        kafkaProducer.sendUserEvent(userDeleteDto);
 
         log.info("User with id {} successfully deleted", userId);
     }
