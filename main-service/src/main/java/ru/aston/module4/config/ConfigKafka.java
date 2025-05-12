@@ -1,4 +1,4 @@
-package ru.aston.module4;
+package ru.aston.module4.config;
 
 
 import org.apache.kafka.clients.admin.NewTopic;

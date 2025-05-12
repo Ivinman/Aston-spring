@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Создает запись в базе данных на основе полученного userDto
-     * и отправляет {@link ru.aston.module4.dto.UserNotificationMessage} в userEventTopic kafka
+     * и отправляет {@link ru.aston.module4.dto.UserEventDto} в userEventTopic kafka
      * <p>Так же создает log</p>
      * @param userDto основа для создания записи
      * @return ту же запись userDto с присвоенным id
@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
 
         UserEventDto userCreateDto = new UserEventDto(user.getName(), userDto.getEmail(), UserEventDto.Event.CREATE);
 
-        kafkaProducer.sendMessage("userEventTopic", userCreateDto);
+        kafkaProducer.sendUserEvent(userCreateDto);
 
         log.info("New user with id {} successfully created", savedUser.getId());
         return mapper.toDto(savedUser);
@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Удаляет из базы данных запись с полученным ключем
-     * и отправляет {@link ru.aston.module4.dto.UserNotificationMessage} в userEventTopic kafka
+     * и отправляет {@link ru.aston.module4.dto.UserEventDto} в userEventTopic kafka
      * <p>Так же создает log</p>
      * @param userId ключ для удаления
      */
@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
 
         UserEventDto userDeleteDto = new UserEventDto(user.getName(), user.getEmail(), UserEventDto.Event.DELETE);
 
-        kafkaProducer.sendMessage("userEventTopic", userDeleteDto);
+        kafkaProducer.sendUserEvent(userDeleteDto);
 
         log.info("User with id {} successfully deleted", userId);
     }
