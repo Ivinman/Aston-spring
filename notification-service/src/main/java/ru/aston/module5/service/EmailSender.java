@@ -16,7 +16,7 @@ public class EmailSender {
         String message = messageBuilder.buildNotificationMessage(dto);
         if (!message.isEmpty()) {
             System.out.println(message);
-            System.out.printf("Сообщение о событии успешно отправлено на email: %s%n", dto.email());
+            log.info("Сообщение о событии успешно отправлено на email: {}", dto.email());
         }
     }
 }
