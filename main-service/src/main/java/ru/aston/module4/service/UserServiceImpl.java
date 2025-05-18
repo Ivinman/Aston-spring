@@ -8,6 +8,7 @@ import ru.aston.module4.dto.UserDto;
 import ru.aston.module4.dto.UserEventDto;
 import ru.aston.module4.dto.UserUpdateDto;
 import ru.aston.module4.entity.User;
+import ru.aston.module4.exception.AlreadyExistException;
 import ru.aston.module4.exception.NotFoundException;
 import ru.aston.module4.mapper.UserMapper;
 import ru.aston.module4.repository.UserRepository;
@@ -38,13 +39,11 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto createUser(UserDto userDto) {
+        checkIfExist(userDto.getEmail());
         User user = mapper.toUser(userDto);
         User savedUser = userRepository.save(user);
-
         UserEventDto userCreateDto = new UserEventDto(user.getName(), userDto.getEmail(), UserEventDto.Event.CREATE);
-
         kafkaProducer.sendUserEvent(userCreateDto);
-
         log.info("New user with id {} successfully created", savedUser.getId());
         return mapper.toDto(savedUser);
     }
@@ -61,6 +60,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto updateUser(Long userId, UserUpdateDto userUpdateDto) {
         User user = getUserOrThrow(userId);
+        checkIfExist(userUpdateDto.getEmail());
         mapper.updateUserFromDto(userUpdateDto, user);
         User userToUpdate = userRepository.save(user);
         log.info("User with id {} successfully updated", userToUpdate.getId());
@@ -128,6 +128,12 @@ public class UserServiceImpl implements UserService {
     private User getUserOrThrow(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
+    }
+
+    private void checkIfExist(String email) {
+        if (userRepository.findByEmail(email) != null) {
+            throw new AlreadyExistException(String.format("Email %s already used", email));
+        }
     }
 }
 
