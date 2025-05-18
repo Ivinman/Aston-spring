@@ -8,7 +8,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
@@ -31,9 +33,19 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+	public ResponseEntity<ValidationErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+		List<ValidationErrorResponse.Violation> violations = ex.getBindingResult().getFieldErrors().stream()
+				.map(error -> {
+					ValidationErrorResponse.Violation violation = new ValidationErrorResponse.Violation();
+					violation.setField(error.getField());
+					violation.setMessage(error.getDefaultMessage());
+					return violation;
+				})
+				.collect(Collectors.toList());
+
+		ValidationErrorResponse response = new ValidationErrorResponse("Ошибка валидации", violations);
+
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body("Поле " + Objects.requireNonNull(ex.getFieldError()).getField() + " " +
-				ex.getFieldError().getDefaultMessage());
+				.body(response);
 	}
 }
