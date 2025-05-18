@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -24,6 +23,7 @@ import org.testcontainers.utility.DockerImageName;
 import ru.aston.module4.dto.UserDto;
 import ru.aston.module4.dto.UserEventDto;
 import ru.aston.module4.dto.UserUpdateDto;
+import ru.aston.module4.exception.AlreadyExistException;
 import ru.aston.module4.exception.NotFoundException;
 import ru.aston.module4.repository.UserRepository;
 import ru.aston.module4.service.UserService;
@@ -87,7 +87,7 @@ public class UserServiceTest {
         service.createUser(userDto1);
         assertEquals(1, service.findAllUsers().size());
         assertEquals(repository.findByEmail(userDto1.getEmail()).getEmail(), userDto1.getEmail());
-        assertThrows(DataIntegrityViolationException.class, () -> service.createUser(userDto1));
+        assertThrows(AlreadyExistException.class, () -> service.createUser(userDto1));
         assertEquals(1, getConsumerRecords().count());
     }
 
@@ -101,8 +101,7 @@ public class UserServiceTest {
         service.createUser(userDto2);
         assertThrows(NotFoundException.class, () -> service.updateUser(23L, userUpdateDto));
 
-        service.updateUser(repository.findAll().get(1).getId(), userUpdateDto);
-        assertThrows(DataIntegrityViolationException.class, repository::findAll);
+        assertThrows(AlreadyExistException.class, () -> service.updateUser(repository.findAll().get(1).getId(), userUpdateDto));
     }
 
     @Test
