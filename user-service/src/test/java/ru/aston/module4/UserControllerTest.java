@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @WebMvcTest
-@ContextConfiguration(classes = Module4Application.class)
+@ContextConfiguration(classes = UserServiceApp.class)
 class UserControllerTest {
 	private final ObjectMapper objectMapper = new ObjectMapper();
 

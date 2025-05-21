@@ -22,7 +22,7 @@
         <developer/>
     </developers>
     <modules>
-        <module>main-service</module>
+        <module>user-service</module>
         <module>notification-service</module>
     </modules>
     <scm>

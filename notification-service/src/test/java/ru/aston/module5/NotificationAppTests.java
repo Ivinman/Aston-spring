@@ -36,7 +36,7 @@ import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Testcontainers
-class Module5ApplicationTests {
+class NotificationAppTests {
 
     private ListAppender<ILoggingEvent> listAppender;
     private Logger emailSenderLogger;
