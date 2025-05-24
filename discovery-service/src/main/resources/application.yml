@@ -1,17 +1,11 @@
 server:
   port: 8761
 
-eureka:
-  instance:
-    hostname: localhost
-    lease-renewal-interval-in-seconds: 30
-    lease-expiration-duration-in-seconds: 90
-  client:
-    register-with-eureka: false
-    fetch-registry: false
-    service-url:
-      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka
-
-  server:
-    enable-self-preservation: true
-    eviction-interval-timer-in-ms: 60000
+spring:
+  application:
+    name: discovery-service
+  config:
+    import: "configserver:"
+  cloud:
+    config:
+      uri: http://localhost:8888
