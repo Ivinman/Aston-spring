@@ -1,4 +1,4 @@
-package ru.aston.module4.config;
+package ru.aston.module7.config;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;

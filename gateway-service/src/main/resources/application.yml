@@ -1,11 +1,47 @@
+#server:
+#  port: 80
+#
+#spring:
+#  application:
+#    name: gateway-service
+#  config:
+#    import: "configserver:"
+#  cloud:
+#    config:
+#      uri: http://localhost:8888
+
 server:
   port: 80
 
 spring:
   application:
     name: gateway-service
-  config:
-    import: "configserver:"
+
   cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - StripPrefix=1
+            - name: CircuitBreaker
+              args:
+                name: customBreaker
+                fallbackUri: forward:/fallback/fallbackResponse
     config:
-      uri: http://localhost:8888
+      enabled: false
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+  eureka:
+    client:
+      service-url:
+        defaultZone: http://localhost:8761/eureka
