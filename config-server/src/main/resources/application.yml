@@ -10,5 +10,3 @@ spring:
           uri: https://github.com/Ivinman/Aston-config.git
           clone-on-start: true
           default-label: main
-#          search-paths:
-#            - "{application}"

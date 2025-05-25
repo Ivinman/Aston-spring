@@ -1,4 +1,4 @@
-package ru.aston.module4;
+package ru.aston.module4.integration;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Transactional
 @Testcontainers
-public class UserServiceTest {
+class UserServiceTest {
     private final UserService service;
     private final UserRepository repository;
 
