@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
@@ -46,6 +47,8 @@ public class UserController {
 	private final UserModelAssembler assembler;
 	private final UserService userService;
 
+	private final CircuitBreakerFactory circuitBreakerFactory;
+
 	@PostMapping
 	@Operation(summary = "Добавить нового пользователя",
 			responses = {
@@ -75,7 +78,10 @@ public class UserController {
 							""")
 			@RequestBody @Valid UserDto userDto) {
 		UserDto createdUser = userService.createUser(userDto);
-		return ResponseEntity.status(HttpStatus.CREATED).body(assembler.toModel(createdUser, RequestType.CREATE));
+		return circuitBreakerFactory.create("breaker").run(
+				() -> ResponseEntity.status(HttpStatus.CREATED).body(assembler.toModel(createdUser, RequestType.CREATE)),
+				throwable -> fallback()
+		);
 	}
 
 	@PatchMapping("/{userId}")
@@ -179,6 +185,10 @@ public class UserController {
 	public ResponseEntity<EntityModel<UserDto>> findUserById(@Parameter(description = "Id пользователя")
 	                                                         @Positive @PathVariable Long userId) {
 		return ResponseEntity.ok(assembler.toModel(userService.findUserById(userId), RequestType.VIEW));
+	}
+
+	private ResponseEntity<EntityModel<UserDto>> fallback() {
+		return ResponseEntity.noContent().build();
 	}
 }
 
