@@ -2,10 +2,30 @@ spring:
   application:
     name: user-service
   config:
-    import: "configserver:"
+    import: "optional:configserver:"
   cloud:
     config:
       uri: http://localhost:8888
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      kafkaCircuitBreaker:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 30
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+  retry:
+    instances:
+      kafkaRetry:
+        maxAttempts: 3
+        waitDuration: 2s
 
 server:
   port: 8080

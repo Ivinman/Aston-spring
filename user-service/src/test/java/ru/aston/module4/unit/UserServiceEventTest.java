@@ -1,4 +1,4 @@
-package ru.aston.module4;
+package ru.aston.module4.unit;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class KafkaProducerTest {
+class UserServiceEventTest {
 	@Mock
 	private UserRepository repository;
 

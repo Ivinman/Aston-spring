@@ -24,7 +24,10 @@ public class ConfigKafka {
 	private String bootstrapServers;
 
 	@Value(value = "${user.event.topic.name}")
-	private String topicName;
+	private String userEventTopicName;
+
+	@Value(value = "${kafka.topic.fallback}")
+	private String fallbackTopicName;
 
 	@Bean
 	public ProducerFactory<String, UserEventDto> producerFactory() {
@@ -42,6 +45,9 @@ public class ConfigKafka {
 
 	@Bean
 	public NewTopic userEventTopic() {
-		return TopicBuilder.name(topicName).build();
+		return TopicBuilder.name(userEventTopicName).build();
 	}
+
+	@Bean
+	public NewTopic fallbackTopic() {return TopicBuilder.name(fallbackTopicName).build();}
 }

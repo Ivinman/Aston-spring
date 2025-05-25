@@ -1,4 +1,4 @@
-package ru.aston.module4;
+package ru.aston.module4.unit;
 
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+import ru.aston.module4.UserServiceApp;
 import ru.aston.module4.dto.UserDto;
 import ru.aston.module4.dto.UserUpdateDto;
 import ru.aston.module4.exception.AlreadyExistException;

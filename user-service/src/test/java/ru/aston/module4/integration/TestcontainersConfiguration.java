@@ -1,4 +1,4 @@
-package ru.aston.module4;
+package ru.aston.module4.integration;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;

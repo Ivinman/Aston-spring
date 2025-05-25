@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 services:
   kafka:
     image: bitnami/kafka:latest
@@ -12,7 +12,7 @@ services:
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
       - ALLOW_PLAINTEXT_LISTENER=yes
     ports:
-      - '9092:9092'
+      - "9092:9092"
 
   main-db:
     image: postgres:latest
