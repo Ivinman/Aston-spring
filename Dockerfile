@@ -9,12 +9,14 @@ RUN mvn -N dependency:go-offline -B
 # 2. Собираем модули в правильном порядке (сначала discovery, потом gateway)
 RUN mvn -f pom.xml -pl ./config-server clean package -DskipTests
 RUN mvn -f pom.xml -pl ./discovery-service clean package -DskipTests
-RUN mvn -f pom.xml -pl ./user-service clean package -DskipTests
+RUN mvn -f pom.xml -pl ./gateway-service clean package -DskipTests
 RUN mvn -f pom.xml -pl ./notification-service clean package -DskipTests
+RUN mvn -f pom.xml -pl ./user-service clean package -DskipTests
 
-RUN cd gateway-service && \
-    mvn -f pom.xml clean package -DskipTests && \
-    cp target/*.jar ../gateway-service.jar
+
+# RUN cd gateway-service && \
+#     mvn -f pom.xml clean package -DskipTests && \
+#     cp target/*.jar ../gateway-service.jar
 
 # Образы для каждого сервиса (без изменений)
 FROM eclipse-temurin:23-jdk as config-server
@@ -38,6 +40,6 @@ EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "/app.jar"]
 
 FROM eclipse-temurin:23-jdk as gateway-service
-COPY --from=builder /workspace/gateway-service.jar /app.jar
+COPY --from=builder /workspace/gateway-service/target/*.jar /app.jar
 EXPOSE 80
 ENTRYPOINT ["java", "-jar", "/app.jar"]
