@@ -1,5 +1,6 @@
 server:
   port: 8888
+
 spring:
   application:
     name: config-server
@@ -10,3 +11,17 @@ spring:
           uri: https://github.com/Ivinman/Aston-config.git
           clone-on-start: true
           default-label: main
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+#        native:
+#          search-locations:
+#            - file:///C:/Aston-config
+#            - file:///C:/Aston-config/{application}

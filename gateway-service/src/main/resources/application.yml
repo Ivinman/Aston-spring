@@ -9,3 +9,5 @@ spring:
   cloud:
     config:
       uri: http://localhost:8888
+  main:
+    web-application-type: reactive
